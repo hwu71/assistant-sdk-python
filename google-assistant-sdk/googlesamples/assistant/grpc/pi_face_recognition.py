@@ -1,0 +1,1 @@
+/home/pi/MagicMirror/modules/third_party/FaceRecognition/pi_face_recognition.py

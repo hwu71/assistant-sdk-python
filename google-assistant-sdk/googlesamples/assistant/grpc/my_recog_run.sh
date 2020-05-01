@@ -1,0 +1,1 @@
+/home/pi/MagicMirror/modules/third_party/FaceRecognition/my_recog_run.sh
