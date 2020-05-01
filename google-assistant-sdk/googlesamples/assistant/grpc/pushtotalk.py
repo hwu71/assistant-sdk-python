@@ -142,20 +142,43 @@ class SampleAssistant(object):
                 logging.info('End of audio request detected.')
                 logging.info('Stopping recording.')
                 self.conversation_stream.stop_recording()
+
             if resp.speech_results:
                 logging.info('Transcript of user request: "%s".',
                              ' '.join(r.transcript
                                       for r in resp.speech_results))
+
             if len(resp.audio_out.audio_data) > 0:
                 if not self.conversation_stream.playing:
                     self.conversation_stream.stop_recording()
                     self.conversation_stream.start_playback()
                     logging.info('Playing assistant response.')
                 self.conversation_stream.write(resp.audio_out.audio_data)
+                #print(resp.audio_out)
+                #string = ' '.join(r.transcript for r in resp.speech_results)
+                #logging.info("output data: \"%s\"", string)
+                #target_string = "face recognition"
+                #logging.info(string)
+                #if target_string in string.lower():
+                #    logging.info("Executing face recognition!!!!!!")
             if resp.dialog_state_out.conversation_state:
                 conversation_state = resp.dialog_state_out.conversation_state
                 logging.debug('Updating conversation state.')
                 self.conversation_state = conversation_state
+            if resp.dialog_state_out.supplemental_display_text:
+                #logging.info('Assistant display text: "%s"',
+                #             resp.dialog_state_out.supplemental_display_text)
+                string = resp.dialog_state_out.supplemental_display_text
+                #logging.info("output data: \"%s\"", string)
+                target_string = "face recognition"
+                #logging.info(string)
+                if target_string in string.lower():
+                    logging.info("Executing face recognition!!!!!!")
+                    #os.system('ls -l /home/pi/MagicMirror/modules/third_party/FaceRecognition/')
+                    #os.system('. /home/pi/MagicMirror/modules/third_party/FaceRecognition/my_import.sh')
+                    #os.system('cd /home/pi/MagicMirror/modules/third_party/FaceRecognition/')
+                    os.system('ls -l')
+                    os.system('./my_recog_run.sh')
             if resp.dialog_state_out.volume_percentage != 0:
                 volume_percentage = resp.dialog_state_out.volume_percentage
                 logging.info('Setting volume to %s%%', volume_percentage)
@@ -422,6 +445,7 @@ def main(api_endpoint, credentials, project_id,
     def onoff(on):
         if on:
             logging.info('Turning device on')
+            logging.info('Executing face recognition')
         else:
             logging.info('Turning device off')
 
