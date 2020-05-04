@@ -123,6 +123,7 @@ class SampleAssistant(object):
         """
         continue_conversation = False
         device_actions_futures = []
+        face_flag = False
 
         self.conversation_stream.start_recording()
         logging.info('Recording audio request.')
@@ -154,13 +155,7 @@ class SampleAssistant(object):
                     self.conversation_stream.start_playback()
                     logging.info('Playing assistant response.')
                 self.conversation_stream.write(resp.audio_out.audio_data)
-                #print(resp.audio_out)
-                #string = ' '.join(r.transcript for r in resp.speech_results)
-                #logging.info("output data: \"%s\"", string)
-                #target_string = "face recognition"
-                #logging.info(string)
-                #if target_string in string.lower():
-                #    logging.info("Executing face recognition!!!!!!")
+
             if resp.dialog_state_out.conversation_state:
                 conversation_state = resp.dialog_state_out.conversation_state
                 logging.debug('Updating conversation state.')
@@ -177,8 +172,9 @@ class SampleAssistant(object):
                     #os.system('ls -l /home/pi/MagicMirror/modules/third_party/FaceRecognition/')
                     #os.system('. /home/pi/MagicMirror/modules/third_party/FaceRecognition/my_import.sh')
                     #os.system('cd /home/pi/MagicMirror/modules/third_party/FaceRecognition/')
-                    os.system('ls -l')
-                    os.system('./my_recog_run.sh')
+                    #os.system('ls -l')
+                    #os.system('./my_recog_run.sh')
+                    face_flag = True
             if resp.dialog_state_out.volume_percentage != 0:
                 volume_percentage = resp.dialog_state_out.volume_percentage
                 logging.info('Setting volume to %s%%', volume_percentage)
@@ -204,6 +200,10 @@ class SampleAssistant(object):
             concurrent.futures.wait(device_actions_futures)
 
         logging.info('Finished playing assistant response.')
+        if face_flag:
+            face_flag = False
+            logging.info("Executing face recognition!!!!!!")
+            os.system('./my_recog_run.sh')
         self.conversation_stream.stop_playback()
         return continue_conversation
 
